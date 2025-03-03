@@ -27,7 +27,7 @@
   <script>
     async function generateWallet() {
       try {
-        const res = await fetch('http://localhost:3000/generate-wallet', { method: 'POST' });
+        const res = await fetch('https://monad-five.vercel.app/generate-wallet', { method: 'POST' });
         const data = await res.json();
 
         document.getElementById('wallet-details').innerText = JSON.stringify(data, null, 2);
@@ -47,7 +47,7 @@
       }
 
       try {
-        const res = await fetch('http://localhost:3000/mint', {
+        const res = await fetch('https://monad-five.vercel.app/mint', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
