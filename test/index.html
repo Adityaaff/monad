@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mint NFT</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Mint NFT</h1>
+
+  <button onclick="generateWallet()">Generate Wallet</button>
+  <h3>Wallet Details:</h3>
+  <pre id="wallet-details"></pre>
+
+  <h3>Mint NFT</h3>
+  <input type="text" id="mint-link" placeholder="Mint link" />
+  <input type="number" id="mint-price" placeholder="Mint Price" />
+  <input type="number" id="quantity" placeholder="Quantity" />
+  <button onclick="mintNFT()">Mint NFT</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function generateWallet() {
+      try {
+        const res = await fetch('http://localhost:3000/generate-wallet', { method: 'POST' });
+        const data = await res.json();
+
+        document.getElementById('wallet-details').innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        console.error('Error generating wallet:', error);
+      }
+    }
+
+    async function mintNFT() {
+      const link = document.getElementById('mint-link').value;
+      const mintPrice = document.getElementById('mint-price').value;
+      const quantity = document.getElementById('quantity').value;
+
+      if (!link || !mintPrice || !quantity) {
+        alert('Please provide link, mint price, and quantity');
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:3000/mint', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            link,
+            mintPrice,
+            quantity
+          })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('result').innerHTML = `
+            Mint successful! <br>
+            Transaction Hash: <a href="${data.explorerLink}" target="_blank">${data.txHash}</a>
+          `;
+        } else {
+          document.getElementById('result').innerHTML = `Error: ${data.error}`;
+        }
+      } catch (error) {
+        console.error('Error minting NFT:', error);
+      }
+    }
+  </script>
+</body>
+</html>
